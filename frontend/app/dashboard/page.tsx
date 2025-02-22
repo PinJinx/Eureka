@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Heart, X, House, Bell, Pencil, User } from "lucide-react";
+import Router, { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
@@ -14,6 +15,9 @@ export default function Dashboard() {
     tags: ["AI", "ML", "Web", "DeepNet", "Blockchain"],
     comments: [[""]],
   });
+  const router = useRouter();
+  const [isClicked, setIsClicked] = useState(false);
+
   const [posts, setPosts] = useState([
     {
       title: "First Post",
@@ -114,9 +118,22 @@ export default function Dashboard() {
                     </span>
                   ))}
                 </div>
-                <h1 className="font-semibold mt-5">
-                  {selectedPost.interested} people are interested in this idea.
+                <h1 className="font-semibold my-5">
+                  People who are interested in this idea:
                 </h1>
+                <text className="font-semibold overflow-y-scroll h-30">
+                  Name , Name
+                </text>
+                <button
+                  className={`w-full p-3 font-semibold rounded-md mt-7 transition-colors ${
+                    !isClicked
+                      ? "bg-gray-500 hover:bg-gray-700"
+                      : "bg-blue-600 hover:bg-blue-800"
+                  } text-white`}
+                  onClick={() => setIsClicked(!isClicked)}
+                >
+                  {isClicked?"I'm Interested":"Not Interested"}
+                </button>
               </div>
             </div>
           </div>
@@ -187,14 +204,39 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col pb-6 space-y-4">
         {/* Name Bar & Search */}
-        <div className="pt-3 pb-3 bg-white flex justify-between">
+        <div className="pt-3 pb-3 bg-white flex justify-between items-center">
           <h1 className="text-2xl pl-3 font-bold">DASHBOARD</h1>
           <div className="flex gap-5">
-            <div className="flex items-center gap-4">
-              <House className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
-              <Bell className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
-              <Pencil className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
-              <User className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
+            <div className="flex items-center gap-8 mt-4 text-gray-500">
+              <button
+                className="flex flex-col justify-around items-center  hover:text-black"
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
+                <House className="w-6 h-6 text-gray-700 cursor-pointer" />
+                <h1 className="text-md  font-bold mb-4">Home</h1>
+              </button>
+
+              <button
+                className="flex flex-col justify-around items-center  hover:text-black"
+                onClick={() => {
+                  router.push("/dashboard");
+                }}
+              >
+                <Bell className="w-6 h-6 text-gray-700 cursor-pointer" />
+                <h1 className="text-md  font-bold mb-4">Notification</h1>
+              </button>
+
+              <button
+                className="flex flex-col justify-around items-center  hover:text-black"
+                onClick={() => {
+                  router.push("/dashboard");
+                }}
+              >
+                <User className="w-6 h-6 text-gray-700 cursor-pointer" />
+                <h1 className="text-md  font-bold mb-4">Account</h1>
+              </button>
             </div>
             <div className="border-black border-[2px]"></div>
             <div>

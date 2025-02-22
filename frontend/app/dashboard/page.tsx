@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { Heart, X, Search } from "lucide-react";
+import { Heart, X, House, Bell, Pencil, User } from "lucide-react";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
@@ -126,44 +126,42 @@ export default function Dashboard() {
     return <></>;
   }
 
-
-  function NewPost(){
-    if(showNewPostModal){
-      return(<div className="w-full h-full z-10 p-10 absolute flex items-center justify-center bg-black/40">
-        <div className="bg-white rounded-md shadow-2xl w-[60%] p-6 flex flex-col relative">
-          <button
-            className="absolute top-4 right-4 text-gray-500 hover:text-black"
-            onClick={() => setShowNewPostModal(false)}
-          >
-            <X size={24} />
-          </button>
-          <h2 className="text-2xl font-bold mb-4">Create New Post</h2>
-          <input
-            type="text"
-            placeholder="Post Title"
-            className="mb-3 p-2 w-full border border-gray-300 rounded-md"
-          />
-          <textarea
-            placeholder="Post Description"
-            className="mb-3 p-2 w-full min-h-60 border border-gray-300 rounded-md"
-          />
-          <div className="flex mb-3 gap-2">
+  function NewPost() {
+    if (showNewPostModal) {
+      return (
+        <div className="w-full h-full z-10 p-10 absolute flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-md shadow-2xl w-[60%] p-6 flex flex-col relative">
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-black"
+              onClick={() => setShowNewPostModal(false)}
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-bold mb-4">Create New Post</h2>
             <input
               type="text"
-              placeholder="Tags (comma separated)"
-              className="p-2 w-full border border-gray-300 rounded-md"
+              placeholder="Post Title"
+              className="mb-3 p-2 w-full border border-gray-300 rounded-md"
             />
+            <textarea
+              placeholder="Post Description"
+              className="mb-3 p-2 w-full min-h-60 border border-gray-300 rounded-md"
+            />
+            <div className="flex mb-3 gap-2">
+              <input
+                type="text"
+                placeholder="Tags (comma separated)"
+                className="p-2 w-full border border-gray-300 rounded-md"
+              />
+            </div>
+            <button className="w-full bg-blue-600 text-white py-2 rounded-md mt-4">
+              Submit
+            </button>
           </div>
-          <button
-            className="w-full bg-blue-600 text-white py-2 rounded-md mt-4"
-          >
-            Submit
-          </button>
         </div>
-      </div>
-    )
+      );
     }
-    return(<></>);
+    return <></>;
   }
 
   return (
@@ -192,6 +190,12 @@ export default function Dashboard() {
         <div className="pt-3 pb-3 bg-white flex justify-between">
           <h1 className="text-2xl pl-3 font-bold">DASHBOARD</h1>
           <div className="flex gap-5">
+            <div className="flex items-center gap-4">
+              <House className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
+              <Bell className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
+              <Pencil className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
+              <User className="w-6 h-6 text-gray-700 cursor-pointer hover:text-black" />
+            </div>
             <div className="border-black border-[2px]"></div>
             <div>
               <p className="text-md pr-3 font-bold">name</p>
@@ -247,7 +251,12 @@ export default function Dashboard() {
 
         {/* Add New Post Button */}
         <div className="flex items-center justify-center">
-          <button className="w-1/2 p-3 bg-blue-600 text-white font-semibold rounded-2xl hover:bg-blue-800" onClick={()=>{setShowNewPostModal(true);}}>
+          <button
+            className="w-1/2 p-3 bg-blue-600 text-white font-semibold rounded-2xl hover:bg-blue-800"
+            onClick={() => {
+              setShowNewPostModal(true);
+            }}
+          >
             Add New Post
           </button>
         </div>
@@ -255,7 +264,7 @@ export default function Dashboard() {
 
       {/* Conditionally render Post component */}
       <Post />
-      <NewPost/>
+      <NewPost />
     </div>
   );
 }

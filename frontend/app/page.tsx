@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Bell, Pencil, House, User } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -27,24 +28,24 @@ export default function Home() {
         <p className="text-xl mb-6">
           Share ideas, find collaborators, and bring projects to life.
         </p>
-        <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100">
+        <Link className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100" href="/navigate">
           Get Started
-        </button>
+        </Link>
       </section>
 
-      <section className="features py-12 bg-gray-100">
+      <section className="features py-12 bg-gray-100 text-black">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8">Platform Features</h2>
+          <h2 className="text-3xl text-black font-bold mb-8">Platform Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="feature-item">
               <Pencil className="w-12 h-12 mx-auto text-blue-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Share Your Ideas</h3>
-              <p>Post and categorize your innovative concepts to attract collaborators.</p>
+              <h3 className="text-xl  font-semibold mb-2">Share Your Ideas</h3>
+              <p >Post and categorize your innovative concepts to attract collaborators.</p>
             </div>
             <div className="feature-item">
-              <User className="w-12 h-12 mx-auto text-blue-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Find Projects</h3>
-              <p>Explore projects that align with your skills and interests.</p>
+              <User className="w-12 h-12  mx-auto text-blue-600 mb-4" />
+              <h3 className="text-xl  font-semibold mb-2">Find Projects</h3>
+              <p className="text-black">Explore projects that align with your skills and interests.</p>
             </div>
             <div className="feature-item">
               <Bell className="w-12 h-12 mx-auto text-blue-600 mb-4" />

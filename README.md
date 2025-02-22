@@ -35,9 +35,9 @@ Eureka is a collaborative web application designed to connect idea creators with
 3. Join discussions and collaborate with others through messaging.
 
 ## Roadmap
-- 🚧 Idea submission and categorization
-- 🚧  Like, comment, and discussion features
-- 🚧  Messaging system for collaboration
+- 🚧 Idea submission and categorization.
+- 🚧  Like, comment, and discussion features.
+- 🚧  Messaging system for collaboration.
 
 ---
 Eureka – Empowering Ideas, Enabling Innovation 🚀

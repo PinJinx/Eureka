@@ -3,10 +3,12 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Heart, X, House, Bell, Pencil, User } from "lucide-react";
 import Router, { useRouter } from "next/navigation";
-import {GetAllPost,AddAPost} from '../dashboard/api';
+import { AddAComment, GetAllPost, AddAPost } from "../dashboard/api";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
+  const [comment, setComment] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [showNewPostModal, setShowNewPostModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState({
     title: "Title Not Loaded Properly",
@@ -15,33 +17,37 @@ export default function Dashboard() {
     interested: 0,
     tags: ["AI", "ML", "Web", "DeepNet", "Blockchain"],
     comments: [[""]],
+    postid: "",
   });
   const router = useRouter();
   const [isClicked, setIsClicked] = useState(false);
 
   const [posts, setPosts] = useState<
-  {
-    title: string;
-    author: string;
-    desc: string;
-    interested: number;
-    tags: string[];
-    comments: string[][];
-  }[]
->([]);
+    {
+      title: string;
+      author: string;
+      desc: string;
+      interested: number;
+      tags: string[];
+      comments: string[][];
+      postid: string;
+    }[]
+  >([]);
 
-useEffect(() => {
-  async function fetchPosts() {
-    const data = await GetAllPost();
-    if (Array.isArray(data)) {  // Ensure data is an array before setting state
-      setPosts(data);
-    } else {
-      setPosts([]);  // Default to an empty array if there's an issue
+  console.log(tags);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const data = await GetAllPost(tags);
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        setPosts([]); // Default to an empty array if there's an issue
+      }
     }
-  }
 
-  fetchPosts();
-}, []);
+    fetchPosts();
+  }, [tags]);
 
   function Post() {
     if (selectedPost.title !== "Title Not Loaded Properly") {
@@ -59,6 +65,7 @@ useEffect(() => {
                     interested: 0,
                     tags: ["AI", "ML", "Web", "DeepNet", "Blockchain"],
                     comments: [[""]],
+                    postid: "",
                   })
                 }
               >
@@ -73,6 +80,30 @@ useEffect(() => {
                 <p className="text-gray-600">{selectedPost.desc}</p>
                 <div>
                   <h1 className="font-semibold mt-4">Comments:</h1>
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault(); // Prevent default form submission
+                      if (comment.trim()) {
+                        // Check if comment is not empty
+                        await AddAComment(comment, selectedPost.postid); // Add the comment
+                        const updatedPosts = await GetAllPost(tags); // Get updated posts
+                        if (Array.isArray(updatedPosts)) {
+                          setPosts(updatedPosts); // Update the posts state
+                        }
+                        setComment(""); // Reset the comment input field
+                      }
+                    }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Add A Comment..."
+                      className="w-full p-2 rounded-2xl mr-5 text-black border focus:outline-none focus:ring-2 focus:ring-gray-500"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)} // Update the comment state
+                    />
+                    <button type="submit" className="hidden"></button>{" "}
+                    {/* Hidden submit button for form */}
+                  </form>
                   <div className="flex flex-col gap-2 mt-2 h-60 overflow-scroll">
                     {selectedPost.comments.map((comm, index) => (
                       <div
@@ -85,37 +116,6 @@ useEffect(() => {
                     ))}
                   </div>
                 </div>
-              </div>
-
-              {/* Right side container */}
-              <div>
-                <h1 className="font-semibold mt-4">Tags:</h1>
-                <div className="flex gap-2 flex-wrap mt-2">
-                  {selectedPost.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <h1 className="font-semibold my-5">
-                  People who are interested in this idea:
-                </h1>
-                <p className="font-semibold overflow-y-scroll h-30">
-                  Name , Name
-                </p>
-                <button
-                  className={`w-full p-3 font-semibold rounded-md mt-7 transition-colors ${
-                    !isClicked
-                      ? "bg-gray-500 hover:bg-gray-700"
-                      : "bg-blue-600 hover:bg-blue-800"
-                  } text-white`}
-                  onClick={() => setIsClicked(!isClicked)}
-                >
-                  {isClicked?"I'm Interested":"Not Interested"}
-                </button>
               </div>
             </div>
           </div>
@@ -130,7 +130,14 @@ useEffect(() => {
         <div className="w-full h-full z-10 p-10 absolute flex items-center justify-center bg-black/40">
           <form
             className="bg-white rounded-md shadow-2xl w-[60%] p-6 flex flex-col relative"
-            onSubmit={(event) => AddAPost(event)}  // Make sure AddAPost is properly invoked with the event
+            onSubmit={async (event) => {
+              await AddAPost(event);
+              setShowNewPostModal(false);
+              const updatedPosts = await GetAllPost(tags);
+              if (Array.isArray(updatedPosts)) {
+                setPosts(updatedPosts);
+              }
+            }}
           >
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-black"
@@ -140,25 +147,28 @@ useEffect(() => {
             </button>
             <h2 className="text-2xl font-bold mb-4">Create New Post</h2>
             <input
-              name='title'
+              name="title"
               type="text"
               placeholder="Post Title"
               className="mb-3 p-2 w-full border border-gray-300 rounded-md"
             />
             <textarea
-              name='content'
+              name="content"
               placeholder="Post Description"
               className="mb-3 p-2 w-full min-h-60 border border-gray-300 rounded-md"
             />
             <div className="flex mb-3 gap-2">
               <input
-                name='tags'
+                name="tags"
                 type="text"
                 placeholder="Tags (comma separated)"
                 className="p-2 w-full border border-gray-300 rounded-md"
               />
             </div>
-            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md mt-4">
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-md mt-4"
+            >
               Submit
             </button>
           </form>
@@ -179,11 +189,40 @@ useEffect(() => {
           <h3 className="text-lg bg-white p-4 text-black font-semibold">
             Sort With Domains
           </h3>
-          <ul className="mt-2 space-y-2 w-full">
-            <Domain name="AI & ML" />
-            <Domain name="Mobile Dev" />
-            <Domain name="Web Dev" />
-          </ul>
+          <div className="mt-2 space-y-2 w-full max-h-[45rem] overflow-y-scroll">
+            <Domain name="AI & ML" setTags={setTags} tag={tags} />
+            <Domain name="Mobile Dev" setTags={setTags} tag={tags} />
+            <Domain name="Web Dev" setTags={setTags} tag={tags} />
+            <Domain name="Deep Learning" setTags={setTags} tag={tags} />
+            <Domain name="Cybersecurity" setTags={setTags} tag={tags} />
+            <Domain name="Cloud Computing" setTags={setTags} tag={tags} />
+            <Domain name="Blockchain" setTags={setTags} tag={tags} />
+            <Domain name="DevOps" setTags={setTags} tag={tags} />
+            <Domain name="Game Development" setTags={setTags} tag={tags} />
+            <Domain name="Embedded Systems" setTags={setTags} tag={tags} />
+            <Domain name="Data Science" setTags={setTags} tag={tags} />
+            <Domain name="Software Testing" setTags={setTags} tag={tags} />
+            <Domain name="Computer Vision" setTags={setTags} tag={tags} />
+            <Domain
+              name="Internet of Things (IoT)"
+              setTags={setTags}
+              tag={tags}
+            />
+            <Domain name="Edge Computing" setTags={setTags} tag={tags} />
+            <Domain name="Quantum Computing" setTags={setTags} tag={tags} />
+            <Domain
+              name="Augmented Reality (AR)"
+              setTags={setTags}
+              tag={tags}
+            />
+            <Domain name="Virtual Reality (VR)" setTags={setTags} tag={tags} />
+            <Domain
+              name="Natural Language Processing (NLP)"
+              setTags={setTags}
+              tag={tags}
+            />
+            <Domain name="Big Data Analytics" setTags={setTags} tag={tags} />
+          </div>
         </div>
       </div>
 
@@ -296,11 +335,39 @@ useEffect(() => {
     </div>
   );
 }
+function Domain({
+  name,
+  setTags,
+  tag,
+}: {
+  name: string;
+  setTags: React.Dispatch<React.SetStateAction<string[]>>;
+  tag: string[];
+}) {
+  const [isSelected, setIsSelected] = useState(false);
 
-function Domain({ name = "" }) {
+  useEffect(() => {
+    if (isSelected) {
+      setTags((prevTags) => [...prevTags, name]);
+    } else {
+      setTags((prevTags) => prevTags.filter((item) => item !== name));
+    }
+  }, [isSelected, name, setTags]); // Only run when `isSelected` changes
+
+  const handleClick = () => {
+    setIsSelected((prev) => !prev); // Toggle the selection state
+  };
+
   return (
-    <li className="hover:bg-white font-bold w-full">
-      <button className="w-full text-left p-2 hover:text-black">
+    <li
+      className={`w-full font-bold cursor-pointer ${
+        isSelected
+          ? "bg-gray-200 text-black"
+          : "hover:bg-white hover:text-black"
+      }`}
+      onClick={handleClick}
+    >
+      <button className="w-full text-left p-2">
         <h1>{name}</h1>
       </button>
     </li>

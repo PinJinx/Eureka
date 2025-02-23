@@ -1,4 +1,8 @@
+import { Session } from "inspector/promises";
 import { FormEvent } from "react";
+
+
+
 
 
 export async function Register(event: FormEvent<HTMLFormElement>) {
@@ -44,11 +48,12 @@ export async function Login(event: FormEvent<HTMLFormElement>) {
             },
             body: JSON.stringify(req)
         });
+        const result = await response.json()
         if (!response.ok) {
             console.error("Failed to fetch data:", response.statusText);
             return 400;
         }
-        return 200;
+        return result['id'];
     } catch (error) {
         console.error("Error fetching data:", error);
         return 400;

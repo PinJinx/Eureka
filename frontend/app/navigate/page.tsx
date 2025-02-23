@@ -3,6 +3,7 @@ import { LogIn } from "lucide-react";
 import React, { useState } from "react";
 import { Register, Login } from "./api";
 import { useRouter } from "next/navigation";
+import { Session } from "inspector/promises";
 
 export default function LoginPage() {
   const [login, setLogin] = useState(false);
@@ -41,7 +42,8 @@ export default function LoginPage() {
                 }
               } else if (login) {
                 const status = await Login(event);
-                if (status === 200) {
+                if (status != 400) {
+                  sessionStorage.setItem('ID',status);
                   router.push("/dashboard"); // Redirect to dashboard after successful login
                 } else {
                   console.log("Login failed");

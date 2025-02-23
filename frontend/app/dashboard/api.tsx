@@ -2,7 +2,7 @@ import { FormEvent } from "react";
 
 
 export async function GetAllPost(tags: string[]) {
-    const url = "https://eureka-blond.vercel.app/posts";
+    const url = "https://temp2-nu.vercel.app/posts";
     const tagQuery = tags.length > 0 ? `tags=${tags.join(",")}` : "";
     const apiUrl = tagQuery ? `${url}?${tagQuery}` : url;
 
@@ -67,7 +67,7 @@ export async function AddAPost(event: FormEvent<HTMLFormElement>) {
         return;
     }
     try {
-        const response = await fetch("https://eureka-blond.vercel.app/post", {
+        const response = await fetch("https://temp2-nu.vercel.app/post", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(req),
@@ -92,7 +92,7 @@ export async function AddAComment(content:string,rid:string) {
         id:sessionStorage.getItem("ID")
     };
     try {
-        const response = await fetch("https://eureka-blond.vercel.app/reply/"+rid, {
+        const response = await fetch("https://temp2-nu.vercel.app/reply/"+rid, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(req),

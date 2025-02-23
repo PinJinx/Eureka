@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart, X, House, Bell, Pencil, User } from "lucide-react";
 import Router, { useRouter } from "next/navigation";
+import {GetAllPost,AddAPost} from '../dashboard/api';
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
@@ -18,48 +19,29 @@ export default function Dashboard() {
   const router = useRouter();
   const [isClicked, setIsClicked] = useState(false);
 
-  const [posts, setPosts] = useState([
-    {
-      title: "First Post",
-      author: "John Doe",
-      desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      interested: 5,
-      tags: ["AI", "ML"],
-      comments: [
-        ["Kane", "Good Idea"],
-        ["Kane", "I want to work on it"],
-        ["Kane", "Please help"],
-        ["Kane", "Please help"],
-        ["Kane", "Please help"],
-        ["Kane", "Please help"],
-        ["Kane", "Please help"],
-      ],
-    },
-    {
-      title: "Second Post",
-      author: "Jane Doe",
-      desc: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-      interested: 30,
-      tags: ["AI", "ML"],
-      comments: [
-        ["Kane", "Good Idea"],
-        ["Kane", "I want to work on it"],
-        ["Kane", "Please help"],
-      ],
-    },
-    {
-      title: "Next.js Tips",
-      author: "Dev Guru",
-      desc: "Lorem Ipsum has survived not only five centuries but also the leap into electronic typesetting.",
-      interested: 15,
-      tags: ["AI", "ML", "WEB"],
-      comments: [
-        ["Kane", "Good Idea"],
-        ["Kane", "I want to work on it"],
-        ["Kane", "Please help"],
-      ],
-    },
-  ]);
+  const [posts, setPosts] = useState<
+  {
+    title: string;
+    author: string;
+    desc: string;
+    interested: number;
+    tags: string[];
+    comments: string[][];
+  }[]
+>([]);
+
+useEffect(() => {
+  async function fetchPosts() {
+    const data = await GetAllPost();
+    if (Array.isArray(data)) {  // Ensure data is an array before setting state
+      setPosts(data);
+    } else {
+      setPosts([]);  // Default to an empty array if there's an issue
+    }
+  }
+
+  fetchPosts();
+}, []);
 
   function Post() {
     if (selectedPost.title !== "Title Not Loaded Properly") {
@@ -121,9 +103,9 @@ export default function Dashboard() {
                 <h1 className="font-semibold my-5">
                   People who are interested in this idea:
                 </h1>
-                <text className="font-semibold overflow-y-scroll h-30">
+                <p className="font-semibold overflow-y-scroll h-30">
                   Name , Name
-                </text>
+                </p>
                 <button
                   className={`w-full p-3 font-semibold rounded-md mt-7 transition-colors ${
                     !isClicked
@@ -142,12 +124,14 @@ export default function Dashboard() {
     }
     return <></>;
   }
-
   function NewPost() {
     if (showNewPostModal) {
       return (
         <div className="w-full h-full z-10 p-10 absolute flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-md shadow-2xl w-[60%] p-6 flex flex-col relative">
+          <form
+            className="bg-white rounded-md shadow-2xl w-[60%] p-6 flex flex-col relative"
+            onSubmit={(event) => AddAPost(event)}  // Make sure AddAPost is properly invoked with the event
+          >
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-black"
               onClick={() => setShowNewPostModal(false)}
@@ -156,42 +140,44 @@ export default function Dashboard() {
             </button>
             <h2 className="text-2xl font-bold mb-4">Create New Post</h2>
             <input
+              name='title'
               type="text"
               placeholder="Post Title"
               className="mb-3 p-2 w-full border border-gray-300 rounded-md"
             />
             <textarea
+              name='content'
               placeholder="Post Description"
               className="mb-3 p-2 w-full min-h-60 border border-gray-300 rounded-md"
             />
             <div className="flex mb-3 gap-2">
               <input
+                name='tags'
                 type="text"
                 placeholder="Tags (comma separated)"
                 className="p-2 w-full border border-gray-300 rounded-md"
               />
             </div>
-            <button className="w-full bg-blue-600 text-white py-2 rounded-md mt-4">
+            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md mt-4">
               Submit
             </button>
-          </div>
+          </form>
         </div>
       );
     }
     return <></>;
   }
-
   return (
     <div className="flex h-screen bg-[#F2F2F2]">
       {/* Sidebar */}
-      <div className="w-1/6 pt-4 text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      <div className="w-1/6 pt-4 text-center bg-gradient-to-b from-blue-500 to-purple-600 text-white">
         <div className="flex justify-center items-center">
           <Image src="/logo.png" alt="logo" width={80} height={80} />
           <h1 className="text-3xl">EUREKA</h1>
         </div>
         <div className="mt-4 w-full">
           <h3 className="text-lg bg-white p-4 text-black font-semibold">
-            Domains
+            Sort With Domains
           </h3>
           <ul className="mt-2 space-y-2 w-full">
             <Domain name="AI & ML" />
@@ -204,7 +190,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col pb-6 space-y-4">
         {/* Name Bar & Search */}
-        <div className="pt-3 pb-3 bg-white flex justify-between items-center">
+        <div className="pt-3 pb-3 bg-white flex justify-between shadow-md items-center">
           <h1 className="text-2xl pl-3 font-bold">DASHBOARD</h1>
           <div className="flex gap-5">
             <div className="flex items-center gap-8 mt-4 text-gray-500">
@@ -239,7 +225,7 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="border-black border-[2px]"></div>
-            <div>
+            <div className="flex flex-col justify-center text-center">
               <p className="text-md pr-3 font-bold">name</p>
               <p className="text-md pr-3">name@gmail.com</p>
             </div>

@@ -45,7 +45,7 @@ export default function Home() {
         <p className="text-xl mb-6">
           Share ideas, find collaborators, and bring projects to life.
         </p>
-        <Link className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100" href="/navigate">
+        <Link className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100" href="/dashboard">
           Get Started
         </Link>
       </section>
@@ -113,9 +113,9 @@ export default function Home() {
           <p className="mb-6">
             Join CollabIdeas today and turn your ideas into reality.
           </p>
-          <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100">
-            Join Now
-          </button>
+          <Link className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-full shadow-md hover:bg-gray-100" href="/navigate">
+          Join Now!
+        </Link>
         </div>
       </section>
     </main>

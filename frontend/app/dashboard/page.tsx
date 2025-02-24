@@ -117,6 +117,41 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+              {/* Right side container */}
+
+              <div>
+                <h1 className="font-semibold mt-4">Tags:</h1>
+
+                <div className="flex gap-2 flex-wrap mt-2">
+                  {selectedPost.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h1 className="font-semibold my-5">
+                  People who are interested in this idea:
+                </h1>
+
+                <p className="font-semibold overflow-y-scroll h-30">
+                  Name , Name
+                </p>
+
+                <button
+                  className={`w-full p-3 font-semibold rounded-md mt-7 transition-colors ${
+                    !isClicked
+                      ? "bg-gray-500 hover:bg-gray-700"
+                      : "bg-blue-600 hover:bg-blue-800"
+                  } text-white`}
+                  onClick={() => setIsClicked(!isClicked)}
+                >
+                  {isClicked ? "I'm Interested" : "Not Interested"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
